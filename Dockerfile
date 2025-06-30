@@ -1,14 +1,12 @@
-# Usar imagen base oficial de Java 17
-FROM eclipse-temurin:17-jdk-jammy
-
-# Crear directorio para la app
+# Etapa 1: construir la app con Maven
+FROM maven:3.8.5-openjdk-17 AS build
 WORKDIR /app
+COPY . .
+RUN ./mvnw clean package -DskipTests
 
-# Copiar el jar generado al contenedor
-COPY target/treebars-backend-0.0.1-SNAPSHOT.jar app.jar
-
-# Exponer puerto 8080 (el que usa Spring Boot)
+# Etapa 2: ejecutar el JAR construido
+FROM eclipse-temurin:17-jdk-jammy
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
-
-# Comando para ejecutar la app
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
