@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3000") // ✅ permitido para React local
+@CrossOrigin(origins = {"http://localhost:3000", "https://treebars-frontend.onrender.com"}) // ✅ para local y producción
 public class AuthController {
 
     @Autowired
@@ -47,6 +47,8 @@ public class AuthController {
     // 🆕 Registro
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody SignupRequest signupRequest) {
+        System.out.println("📥 Recibido registro: " + signupRequest.getEmail());
+
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
             return ResponseEntity.status(400).body("❌ Ya existe un usuario con ese email.");
         }
@@ -54,7 +56,7 @@ public class AuthController {
         User newUser = User.builder()
                 .name(signupRequest.getName())
                 .email(signupRequest.getEmail())
-                .password(signupRequest.getPassword()) // ⚠️ Aún sin encriptar
+                .password(signupRequest.getPassword()) // ⚠️ aún sin encriptar
                 .role(signupRequest.getRole())
                 .build();
 
