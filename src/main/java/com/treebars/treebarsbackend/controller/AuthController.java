@@ -12,10 +12,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = {"http://localhost:3000", "https://treebars-frontend.onrender.com"}) // ✅ para local y producción
+@CrossOrigin(origins = {"http://localhost:3000", "https://treebars-frontend.onrender.com"})
 public class AuthController {
 
     @Autowired
@@ -30,13 +31,13 @@ public class AuthController {
         Optional<User> optionalUser = userRepository.findByEmail(loginRequest.getEmail());
 
         if (optionalUser.isEmpty()) {
-            return ResponseEntity.status(404).body("Usuario no encontrado ❌");
+            return ResponseEntity.status(404).body(Map.of("error", "Usuario no encontrado ❌"));
         }
 
         User user = optionalUser.get();
 
         if (!user.getPassword().equals(loginRequest.getPassword())) {
-            return ResponseEntity.status(403).body("Contraseña incorrecta ❌");
+            return ResponseEntity.status(403).body(Map.of("error", "Contraseña incorrecta ❌"));
         }
 
         String token = jwtUtils.generateToken(user.getEmail(), user.getRole(), user.getName());
@@ -46,21 +47,22 @@ public class AuthController {
 
     // 🆕 Registro
     @PostMapping("/register")
+    @CrossOrigin(origins = {"http://localhost:3000", "https://treebars-frontend.onrender.com"})
     public ResponseEntity<?> register(@RequestBody SignupRequest signupRequest) {
         System.out.println("📥 Recibido registro: " + signupRequest.getEmail());
 
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            return ResponseEntity.status(400).body("❌ Ya existe un usuario con ese email.");
+            return ResponseEntity.status(400).body(Map.of("error", "❌ Ya existe un usuario con ese email."));
         }
 
         User newUser = User.builder()
                 .name(signupRequest.getName())
                 .email(signupRequest.getEmail())
-                .password(signupRequest.getPassword()) // ⚠️ aún sin encriptar
+                .password(signupRequest.getPassword())
                 .role(signupRequest.getRole())
                 .build();
 
         userRepository.save(newUser);
-        return ResponseEntity.ok("✅ Usuario registrado exitosamente.");
+        return ResponseEntity.ok(Map.of("message", "✅ Usuario registrado exitosamente."));
     }
 }
