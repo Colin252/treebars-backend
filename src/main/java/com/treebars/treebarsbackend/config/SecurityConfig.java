@@ -32,8 +32,8 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/api/public/**").permitAll()
-                        .requestMatchers("/api/routines/**").permitAll() // ✅ permite crear/ver rutinas sin token (temporal)
+                        .requestMatchers("/api/auth/**", "/api/public/**", "/api/status").permitAll() // ✅ permite status
+                        .requestMatchers("/api/routines/**").permitAll() // ⚠️ temporal sin token
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -50,7 +50,7 @@ public class SecurityConfig {
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(customUserDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder()); // Texto plano por ahora
+        authProvider.setPasswordEncoder(passwordEncoder()); // Texto plano temporal
         return authProvider;
     }
 

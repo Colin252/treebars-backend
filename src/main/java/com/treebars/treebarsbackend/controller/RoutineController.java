@@ -3,30 +3,41 @@ package com.treebars.treebarsbackend.controller;
 import com.treebars.treebarsbackend.entity.Routine;
 import com.treebars.treebarsbackend.service.RoutineService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/routines")
-@CrossOrigin(origins = "*") // Permite CORS desde cualquier origen
+@CrossOrigin(origins = "*")
 public class RoutineController {
 
     @Autowired
     private RoutineService routineService;
 
     @GetMapping
-    public ResponseEntity<List<Routine>> getAllRoutines() {
-        List<Routine> routines = routineService.getAllRoutines();
+    public ResponseEntity<List<Routine>> getAllRoutines(Principal principal) {
+        String email = principal.getName();
+        List<Routine> routines = routineService.getAllRoutinesByUserEmail(email);
+
+        if (routines.isEmpty()) {
+            System.out.println("⚠️ No hay rutinas para el usuario: " + email);
+        } else {
+            System.out.println("✅ Rutinas encontradas para " + email + ": " + routines.size());
+            System.out.println("🧪 Rutinas encontradas: " + routines); // 🔍 log extra
+        }
+
         return ResponseEntity.ok(routines);
     }
 
     @PostMapping
-    public ResponseEntity<Routine> crearRutina(@RequestBody Routine rutina) {
-        Routine nueva = routineService.crearRutina(rutina);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
+    public ResponseEntity<Routine> crearRutina(@RequestBody Routine rutina, Principal principal) {
+        System.out.println("📥 Recibida nueva rutina: " + rutina.getName());
+        String email = principal.getName();
+        Routine nueva = routineService.crearRutinaConUsuario(rutina, email);
+        return ResponseEntity.status(201).body(nueva);
     }
 
     @PutMapping("/{id}")

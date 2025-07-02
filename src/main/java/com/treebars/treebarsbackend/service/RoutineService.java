@@ -1,7 +1,9 @@
 package com.treebars.treebarsbackend.service;
 
 import com.treebars.treebarsbackend.entity.Routine;
+import com.treebars.treebarsbackend.entity.User;
 import com.treebars.treebarsbackend.repository.RoutineRepository;
+import com.treebars.treebarsbackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +16,20 @@ public class RoutineService {
     @Autowired
     private RoutineRepository routineRepository;
 
-    public List<Routine> getAllRoutines() {
-        return routineRepository.findAll();
+    @Autowired
+    private UserRepository userRepository;
+
+    public Routine crearRutinaConUsuario(Routine rutina, String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + email));
+        rutina.setUser(user);
+        return routineRepository.save(rutina);
     }
 
-    public Routine crearRutina(Routine rutina) {
-        return routineRepository.save(rutina);
+    public List<Routine> getAllRoutinesByUserEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + email));
+        return routineRepository.findByUser(user);
     }
 
     public Optional<Routine> findById(Long id) {
