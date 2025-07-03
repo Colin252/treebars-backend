@@ -1,3 +1,4 @@
+// ✅ UserRepository.java
 package com.treebars.treebarsbackend.repository;
 
 import com.treebars.treebarsbackend.entity.User;
