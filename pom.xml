@@ -69,7 +69,7 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- Validación (Javax) -->
+		<!-- Validación -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
@@ -89,7 +89,7 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- DevTools (Hot Reload) -->
+		<!-- DevTools -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -127,20 +127,58 @@
 				</configuration>
 			</plugin>
 
-			<!-- Spring Boot Plugin -->
+			<!-- Spring Boot -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 
-			<!-- Opcional: Desactivar pruebas al compilar -->
+			<!-- Surefire: ejecuta tests (NO saltarlos por defecto) -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.2.5</version>
 				<configuration>
-					<skipTests>true</skipTests>
+					<skipTests>false</skipTests>
 				</configuration>
+			</plugin>
+
+			<!-- JaCoCo: cobertura de código -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.11</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+				<!-- Opcional: exigir cobertura mínima (descomentar si quieres) -->
+				<!--
+                <configuration>
+                  <rules>
+                    <rule>
+                      <element>BUNDLE</element>
+                      <limits>
+                        <limit>
+                          <counter>INSTRUCTION</counter>
+                          <value>COVEREDRATIO</value>
+                          <minimum>0.60</minimum>
+                        </limit>
+                      </limits>
+                    </rule>
+                  </rules>
+                </configuration>
+                -->
 			</plugin>
 
 		</plugins>
