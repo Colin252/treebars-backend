@@ -1,4 +1,6 @@
 # 🚀 TreeBars Backend – Spring Boot API for Fitness App
+# TreeBars Backend  
+Proyecto Full Stack Calisthenics App
 
 This is the backend of **TreeBars**, a full stack fitness application. It provides secure RESTful APIs for user authentication, workout routine management, and muscle zone tracking. Built with Java 17 and Spring Boot 3, it includes JWT-based security and full MySQL database integration.
 
